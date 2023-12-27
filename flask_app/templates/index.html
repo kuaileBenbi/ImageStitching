@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Stitching</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <div id="map" style="width: 800px; height: 600px;"></div>
+
+    <script>
+        var map = L.map('map').setView([19.2, 109.7], 7);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        // 创建socket连接
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('connect', function() {
+            console.log('Websocket connected!');
+            socket.emit('stitch_and_send');
+            console.log('Websocket try to get stitched images!');
+        });
+
+        // 监听后端发送的图像和边界信息
+        socket.on('stitched_image_data', function(msg) {
+            console.log('Received stitched image data: ', msg);
+            var imageBounds = msg.bounds;
+
+            // // 移除先前的图像（如果有的话）
+            // if (window.overlayImage) {
+            //     map.removeLayer(window.overlayImage);
+            // }
+
+            // 添加新的图像
+            var overlayImage = L.imageOverlay(msg.image_name, imageBounds);
+            overlayImage.on('load', function() {
+            console.log('Image loaded!');
+            });
+
+            overlayImage.addTo(map);
+
+            // window.overlayImage = L.imageOverlay(msg.image_path, imageBounds).addTo(map);
+
+            // 根据图像边界调整视图
+            map.fitBounds(imageBounds);
+        });
+
+        // 处理连接错误事件
+        socket.on('connect_error', function(err) {
+            console.log('Error connecting to websocket server:', err);
+        });
+    </script>
+</body>
+</html>

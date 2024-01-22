@@ -12,12 +12,14 @@ app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # 假定所有的GeoTIFF图像都位于这个文件夹中
-IMAGE_FOLDER = 'results/5'
+base_dir = os.path.dirname(os.path.realpath(__file__))
+IMAGE_FOLDER = os.path.join(base_dir, 'results', '5')
+
 STITCHED_FOLDER = 'static/stitched_images'
 
 @app.route('/get_stitched_image/<filename>')
 def get_stitched_image(filename):
-    return send_from_directory(STITCHED_FOLDER, filename)
+    return send_from_directory("stitched_images", filename)
 
 def geotiff2rgb(arr):
     if arr.dtype != np.uint8:
@@ -91,7 +93,6 @@ def stitch_images(image_folder):
         cv2.imwrite(stitched_image_path, stitched)
 
         # 假设所有图像在同一坐标系下，计算边界（这需要根据实际情况来确定）
-        # 以下计算是非常简化的，可能并不适用于您的实际情况
         min_x = min(transform[0] for transform in transforms)
         max_y = min(transform[3] for transform in transforms)
         pixel_width = min(transform[1] for transform in transforms)

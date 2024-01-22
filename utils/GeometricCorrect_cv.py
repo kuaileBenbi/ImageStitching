@@ -139,7 +139,7 @@ def normalize_coordinates(originate_crd: np.ndarray, image_size: Tuple[int, int]
     return normalized_coords
 
 
-def reprojection(image_path: str,
+def reprojection(image: np.ndarray,
                  current_camera_position: Tuple[float, float, float],
                  pod_angles: Tuple[float, float],
                  aircraft_angles: Tuple[float, float, float],
@@ -160,7 +160,7 @@ def reprojection(image_path: str,
     :return: corrected_image_rgba: 校正后的图像
     """
     # 加载图像
-    image = cv2.imread(image_path)
+    # image = cv2.imread(image_path)
     image_width, image_height = image.shape[1], image.shape[0]
 
     # 图像四角的像素坐 (齐次坐标)
@@ -249,5 +249,6 @@ if __name__ == "__main__":
 
     image_path = 'datasets/1/short_date0405_07h22m29s.jpg'
     save_path = 'corrected_image_transparent.png'
-    corrected_image = reprojection(image_path, current_camera_position,
+    image = cv2.imread(image_path)
+    corrected_image = reprojection(image, current_camera_position,
                                    pod_angles, aircraft_angles, focal_length_mm, sensor_size_mm, save_path)

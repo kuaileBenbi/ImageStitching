@@ -1,5 +1,5 @@
 {
     "geoinfo": "1_info.csv",
-    "image": "datasets/1/1",
-    "corrected": "corrected_png"
+    "image": "datasets/1",
+    "corrected": "corrected"
 }

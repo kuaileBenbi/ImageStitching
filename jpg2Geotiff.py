@@ -47,29 +47,28 @@ def correctimage(current_geoinfo, current_img, current_savename):
                                                        pod_angles,
                                                        aircraft_angles,
                                                        focal_length_mm,
-                                                       sensor_size_mm,
-                                                       current_savename)
-    # coord_string = current_geoinfo['短波视场坐标']
-    # # 使用正则表达式提取数字
-    # coord_numbers = re.findall(r'\d+\.\d+', coord_string)
-    # # 将字符串数字转换为浮点数
-    # coordinates = [float(num) for num in coord_numbers]
-    # # 将提取的浮点数分组为坐标点（经度，纬度）
-    # points = [(coordinates[i], coordinates[i + 1]) for i in range(0, len(coordinates), 2)]
+                                                       sensor_size_mm)
+    coord_string = current_geoinfo['短波视场坐标']
+    # 使用正则表达式提取数字
+    coord_numbers = re.findall(r'\d+\.\d+', coord_string)
+    # 将字符串数字转换为浮点数
+    coordinates = [float(num) for num in coord_numbers]
+    # 将提取的浮点数分组为坐标点（经度，纬度）
+    points = [(coordinates[i], coordinates[i + 1]) for i in range(0, len(coordinates), 2)]
 
-    # # 中心点的坐标是所有顶点坐标的平均值
-    # img_center_lon = sum(point[0] for point in points) / len(points)
-    # img_center_lat = sum(point[1] for point in points) / len(points)
+    # 中心点的坐标是所有顶点坐标的平均值
+    img_center_lon = sum(point[0] for point in points) / len(points)
+    img_center_lat = sum(point[1] for point in points) / len(points)
 
 
-    # horizontal_angle, vertical_angle = current_geoinfo['短波视场角宽（角度）'], current_geoinfo['短波视场角高（角度）']
-    # Geometric_addgeoinfo.georeference_image_in_local(corrected_image,
-    #                                         img_center_lon,
-    #                                         img_center_lat,
-    #                                         current_camera_position[2],
-    #                                         horizontal_angle,
-    #                                         vertical_angle,
-    #                                         current_savename)
+    horizontal_angle, vertical_angle = current_geoinfo['短波视场角宽（角度）'], current_geoinfo['短波视场角高（角度）']
+    Geometric_addgeoinfo.georeference_image_in_local(corrected_image,
+                                            img_center_lon,
+                                            img_center_lat,
+                                            current_camera_position[2],
+                                            horizontal_angle,
+                                            vertical_angle,
+                                            current_savename)
 
     
 if __name__ == "__main__":
@@ -85,6 +84,6 @@ if __name__ == "__main__":
         current_imgnname = os.path.join(imgpath, imgname)
         current_img = cv2.imread(current_imgnname)
         current_geoinfo = geoinfo[imgname[6:-4]]
-        current_savename = os.path.join(savepath, imgname[:-4]+'.png')
+        current_savename = os.path.join(savepath, imgname[:-4]+'.tif')
         correctimage(current_geoinfo, current_img, current_savename)
 

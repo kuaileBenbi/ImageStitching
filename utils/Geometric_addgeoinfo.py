@@ -112,10 +112,10 @@ def georeference_image_in_local(corrected_image: np.ndarray,
             horizontal_angle: 水平视场角β (单位: 度)
             img_width: 图像的宽度
             img_height: 图像的高度
-        img_center_lon: 图像中心的经度
-        img_center_lat: 图像中心的纬度
-        input_image_data: 待校正图像
-        output_image_path: 校正后图像的保存路径+名字
+            img_center_lon: 图像中心的经度
+            img_center_lat: 图像中心的纬度
+            input_image_data: 待校正图像
+            output_image_path: 校正后图像的保存路径+名字
 
     返回:
        校正后含有地理信息的gdal outdata保存到本地
@@ -125,10 +125,14 @@ def georeference_image_in_local(corrected_image: np.ndarray,
     # Open the image using GDAL
     # 创建一个新的GDAL内存数据集
     mem_driver = gdal.GetDriverByName('MEM')
-    mem_ds = mem_driver.Create('', img_width, img_height, 1, gdal.GDT_Byte)
+    # mem_ds = mem_driver.Create('', img_width, img_height, 1, gdal.GDT_Byte)
+    mem_ds = mem_driver.Create('', img_width, img_height, 4, gdal.GDT_Byte)
 
     # 将校正后的图像数据复制到内存数据集
-    mem_ds.GetRasterBand(1).WriteArray(corrected_image[:,:,0])  # 单波段图像
+    # mem_ds.GetRasterBand(1).WriteArray(corrected_image[:,:,0])  # 单波段图像
+    for i in range(4):
+        band = mem_ds.GetRasterBand(i + 1)
+        band.WriteArray(corrected_image[:,:,i])
     
     # Set geotransformation
     geotransform = compute_GeoTransform(img_center_lon,
@@ -157,5 +161,5 @@ def georeference_image_in_local(corrected_image: np.ndarray,
 
 
 if __name__ == "__main__":
-    input_image_path = 'cut_datasets/1/short_date0405_07h22m29s.jpg'
+    input_image_path = 'corrected/short_date0405_10h10m51s.jpg'
     img_center_lon, img_center_lat = 110.1, 19.3

@@ -53,6 +53,19 @@ corrected_image = cv2.warpPerspective(image, H, (image.shape[1], image.shape[0])
 将几何校正后的图像贴图到地图上
 
 ![地图显示过程](/pddon/地图显示过程.png)
+原图格式：
+- 命名：{波段} _ {mmdd} _ {hhmmss}.tif
+- 生成过程：由53张带有相机内参、外参的大疆无人机M3E航拍图像转换
+    - camera_info.json: 相机内参（相机焦距、传感器参数计算得到，畸变系数可选）
+    - posture_info.json: 相机外参（拍摄xx.jpg时相机的pos（llh）和云台的orientation（YPR））
+    - 运行转换命令，得到经过几何校正及保存地理信息的图像
+
+    ```python 
+    python jpg2Geotiff_DJI.py camera_info.json posture_info.json "survey/DJI_images" "corrected_DJI_images"
+     ```
+
+    
+    
 
 1. 定时读取和更新图像
     - 定期检查文件夹中的新图像。（一个后端服务来实现文件夹的访问和图像列表的获取）

@@ -76,8 +76,10 @@ def main(camera_info_file, posture_info_file, input_directory, output_directory)
         os.makedirs(output_directory)
     
     for imgname, imgpath in original_images.items():
+        if imgname.startswith('.'):
+            continue
         original_image = cv2.imread(imgpath)
-        savepath = os.path.join(output_directory, imgname[:-4]+".tif")
+        savepath = os.path.join(output_directory, imgname[:-4]+".tif")        
         GeometricCorrect_cv_DJI.reprojection(original_image, camera_info, posture_info[imgname], savepath)
 
     

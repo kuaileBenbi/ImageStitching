@@ -16,3 +16,9 @@ old_cal
 /corrected
 /corrected_png
 /corrected_DJI_images
+*.json
+/survey
+**/.DS_Store
+**/__pycache__
+*.pyc
+/utils/__pycache__
